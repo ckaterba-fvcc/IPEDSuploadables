@@ -26,8 +26,8 @@ make_ef2_part_A <- function(df) {
                               "ISDEGREECERTSEEKING",
                               "STUDENTLEVEL",
                               "RACEETHNICITY",
-                              "SEX",
-                              "CIP990000") %>%
+                              "SEX"
+                              ) %>%
                 dplyr::mutate(LINE = dplyr::case_when(
                                       .data$ISFULLTIME == 1 & .data$ISFIRSTTIME == 1 & .data$ISDEGREECERTSEEKING == 1 & .data$STUDENTLEVEL == "Undergraduate" ~ 1,
                                       .data$ISFULLTIME == 1 & .data$ISTRANSFER == 1 & .data$ISDEGREECERTSEEKING == 1 & .data$STUDENTLEVEL == "Undergraduate" ~ 2,
