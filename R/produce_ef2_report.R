@@ -58,7 +58,7 @@ produce_ef2_report <- function(students, retention, part = "ALL", include_option
 
 
   if (toupper(part) == "ALL") {
-    partA <- make_ef2_part_A(df = students, cips = cip_year)
+    partA <- make_ef2_part_A(df = students)
     partG <- make_ef2_part_G(df = students)
 
     #parts B/C are optional in some years;
@@ -76,7 +76,7 @@ produce_ef2_report <- function(students, retention, part = "ALL", include_option
     partD <- make_ef2_part_D(df = students)
     partE <- make_ef2_part_E(df = retention)
     partF <- make_ef2_part_F(df = students)
-    partH <- make_ef2_part_H(df = students, ugender = ugender, ggender = ggender)
+    partH <- make_ef2_part_H(df = students, ugender = ugender)
 
     if(toupper(format) == 'UPLOADABLE'){
       write_report(
