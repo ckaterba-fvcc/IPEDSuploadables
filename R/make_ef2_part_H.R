@@ -45,7 +45,7 @@ make_ef2_part_H <- function(df, ugender) {
                       PART = "H",
                       EFGU01 = 0,  #UG detail reporting?
                       EFGU011 = 0, #UG Unknown
-                      EFGU012 = 0, #UG Another
+                      EFGU012 = 0 #UG Another
                       )
 
   #ugly way to get the right counts in each bit.
