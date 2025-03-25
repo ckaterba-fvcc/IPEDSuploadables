@@ -13,14 +13,14 @@
 #' @export
 #'
 
-make_ef1_part_E <- function(df) {
+make_ef2_part_E <- function(df) {
 
   colnames(df) <- stringr::str_to_upper(colnames(df))
 
   partE <- df %>%
            #format for upload
            dplyr::transmute(UNITID = .data$UNITID,
-                            SURVSECT = "EF1",
+                            SURVSECT = "EF2",
                             PART = "E",
                             FT_PY_COHORT = .data$ORIGCOHORT[.data$ISFULLTIME == 1],
                             FT_EXCLUSIONS = .data$EXCLUSIONS[.data$ISFULLTIME == 1],

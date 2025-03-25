@@ -14,7 +14,7 @@
 #' @export
 #'
 
-make_ef1_part_G <- function(df) {
+make_ef2_part_G <- function(df) {
 
   colnames(df) <- stringr::str_to_upper(colnames(df))
 
@@ -23,7 +23,7 @@ make_ef1_part_G <- function(df) {
                                     UNITIDSTATE = df$UNITIDSTATE[1],
                                     STUDENTID = "thisisastudentid",
                                     ISDEGREECERTSEEKING = c(0, 1),
-                                    STUDENTLEVEL = c("Undergraduate", "Graduate"),
+                                    STUDENTLEVEL = "Undergraduate",
                                     ONLINESTATE = c(df$UNITIDSTATE[1], 6, 57, 78, 90), #cover all the options
                                     DISTANCEED = c(1,2),
                                     counter = 0,
@@ -51,8 +51,7 @@ make_ef1_part_G <- function(df) {
                                values_from = "counter", values_fill = 0) %>%
             dplyr::select(-"Nope") %>%
            dplyr::mutate(LINE = dplyr::case_when(.data$ISDEGREECERTSEEKING == 1 & .data$STUDENTLEVEL == "Undergraduate" ~ 1,
-                                   .data$ISDEGREECERTSEEKING == 0 & .data$STUDENTLEVEL == "Undergraduate" ~ 2,
-                                   .data$STUDENTLEVEL == "Graduate" ~ 3
+                                   .data$ISDEGREECERTSEEKING == 0 & .data$STUDENTLEVEL == "Undergraduate" ~ 2
                                  )
                          ) %>%
            dplyr::mutate(ENROLL_EXC = ifelse(.data$DISTANCEED == 2 & .data$dummyrow == 0, 1, 0),
@@ -70,7 +69,7 @@ make_ef1_part_G <- function(df) {
            dplyr::arrange(.data$LINE) %>%
            #format for upload
            dplyr::transmute(UNITID = .data$UNITID,
-                            SURVSECT = "EF1",
+                            SURVSECT = "EF2",
                             PART = "G",
                             LINE = .data$LINE,
                             ENROLL_EXCLUSIVE = .data$ENROLLEXCLUSIVE,

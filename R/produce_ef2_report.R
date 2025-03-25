@@ -6,7 +6,8 @@
 #' @param part A string with what part of the report you want to produce: 'all',
 #'   'A', etc.
 #' @param include_optional A boolean flag for whether optional parts should be
-#'   included
+#'   included, set default to true for 2-year colleges as CIP stuff is never
+#'   included, so parts B and C seem to be always necessary.
 #' @param format A string (\code{"uploadable"} will produce a properly formatted
 #'   upload file. \code{"readable"} will produce a csv of the upload file (only
 #'   works for one part at a time). \code{"both"} will provide both options, but
@@ -14,9 +15,6 @@
 #' @param ugender A boolean: TRUE means you are collecting and able to report
 #'   "another gender" for undergraduate completers, even if you have no (or few)
 #'   such students. Set as FALSE if necessary
-#' @param ggender A boolean: TRUE means you are collecting and able to report
-#'   "another gender" for graduate completers, even if you have no (or few) such
-#'   students. Set as FALSE if necessary
 #'
 #'
 #' @return A txt or csv file at the path of your choice
@@ -43,41 +41,42 @@
 #' setwd(.old_wd)
 #' }
 
-produce_ef1_report <- function(students, retention, part = "ALL", include_optional = FALSE,
-                               format = "uploadable", ugender = TRUE, ggender = TRUE) {
+produce_ef2_report <- function(students, retention, part = "ALL", include_optional = TRUE,
+                               format = "uploadable", ugender = TRUE) {
 
   stopifnot(toupper(part) %in% c("A", "B", "C", "D", "E", "F", "G", "H", "ALL"),
             toupper(format) %in% c("UPLOADABLE", "READABLE", "BOTH"))
 
   #setup
-  students <- prep_ef1_data_frame(students)
+  students <- prep_ef2_data_frame(students)
 
   survey <- 'FallEnrollment'
   output_path <- set_report_path()
 
-  cip_year <- ((as.numeric(substr(Sys.Date(), 6, 7)) >= 8) + as.numeric(substr(Sys.Date(), 1, 4))) %% 2 == 1
+  # no cip year needed for 2YC
+  #cip_year <- ((as.numeric(substr(Sys.Date(), 6, 7)) >= 8) + as.numeric(substr(Sys.Date(), 1, 4))) %% 2 == 1
 
 
   if (toupper(part) == "ALL") {
-    partA <- make_ef1_part_A(df = students, cips = cip_year)
-    partG <- make_ef1_part_G(df = students)
+    partA <- make_ef2_part_A(df = students, cips = cip_year)
+    partG <- make_ef2_part_G(df = students)
 
     #parts B/C are optional in some years;
     #this allows them to be included by rule (based on time) or by election
     #we still need to produce a DF so the call to write_report doesn't fail
     #but write_report itself has been updated to remove empty DFs, so the final file is ok
-    if (cip_year == FALSE | include_optional == TRUE) {
-      partB <- make_ef1_part_B(df = students)
+    if (include_optional == TRUE) {
+      partB <- make_ef2_part_B(df = students)
     } else {partB <- data.frame()}
 
-    if (cip_year == TRUE | include_optional == TRUE) {
-      partC <- make_ef1_part_C(df = students)
+    if (include_optional == TRUE) {
+      partC <- make_ef2_part_C(df = students)
     } else {partC <- data.frame()}
 
-    partD <- make_ef1_part_D(df = students)
-    partE <- make_ef1_part_E(df = retention)
-    partF <- make_ef1_part_F(df = students)
-    partH <- make_ef1_part_H(df = students, ugender = ugender, ggender = ggender)
+    partD <- make_ef2_part_D(df = students)
+    partE <- make_ef2_part_E(df = retention)
+    partF <- make_ef2_part_F(df = students)
+    partH <- make_ef2_part_H(df = students, ugender = ugender, ggender = ggender)
 
     if(toupper(format) == 'UPLOADABLE'){
       write_report(
@@ -100,21 +99,21 @@ produce_ef1_report <- function(students, retention, part = "ALL", include_option
   } else if(toupper(part) %in% c('A','B', 'C', 'D', 'E', 'F', 'G', 'H')){
 
     if(toupper(part) == "A") {
-      partX <- do.call(paste0("make_ef1_part_", toupper(part)), list(students, cip_year))
+      partX <- do.call(paste0("make_ef2_part_", toupper(part)), list(students, cip_year))
     }
 
     if (toupper(part) %in% c("G", "B", "C", "D", "F")) {
       #don't have to do a special cipyear etc thing, because if they're asking for the part, we'll make it
-      partX <- do.call(paste0("make_ef1_part_", toupper(part)), list(students))
+      partX <- do.call(paste0("make_ef2_part_", toupper(part)), list(students))
     }
 
     if (toupper(part) == "H") {
-      partX <- do.call(paste0("make_ef1_part_", toupper(part)), list(students, ugender, ggender))
+      partX <- do.call(paste0("make_ef2_part_", toupper(part)), list(students, ugender, ggender))
     }
 
 
     if (toupper(part) == "E") {
-      partX <- do.call(paste0("make_ef1_part_", toupper(part)), list(retention))
+      partX <- do.call(paste0("make_ef2_part_", toupper(part)), list(retention))
     }
 
     if(toupper(format) %in% c('UPLOADABLE', 'BOTH')){

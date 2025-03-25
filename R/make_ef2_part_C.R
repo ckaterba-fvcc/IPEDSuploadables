@@ -14,7 +14,7 @@
 #' @export
 #'
 
-make_ef1_part_C <- function(df) {
+make_ef2_part_C <- function(df) {
 
   colnames(df) <- stringr::str_to_upper(colnames(df))
 
@@ -66,7 +66,7 @@ make_ef1_part_C <- function(df) {
                           .data$HS) %>%
            #format for upload
            dplyr::transmute(UNITID = .data$UNITID,
-                            SURVSECT = "EF1",
+                            SURVSECT = "EF2",
                             PART = "C",
                             LINE = .data$LINE,
                             HS = .data$HS,

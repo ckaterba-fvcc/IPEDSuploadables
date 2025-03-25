@@ -24,8 +24,6 @@
     
     - Same df as specified for produce_gr200_report; `IsComp` field, at least according to IPEDS, seems to indicate only if a student has completed in year 4 (ie between 151 and 200 percent of program length), not <= 4 years. Maybe use same 
 
-[Below is TO DO (functions copied from 4-year college version)]
-
 3. Fall Enrollment
   
   - Functions:
@@ -35,6 +33,10 @@
     - produce_ef2_report.R
     
   - Use
+    - Student df is basically the same, but don't need CIP columns 
+    - Retention df is the same
+
+[Below is TO DO (functions copied from 4-year college version)]
 
 4. 12-month enrollment
 
@@ -48,4 +50,4 @@
     
 5. Check outcome measures for 2-year schools.
 
-## Still need to test 2-4! 
+*** Still need to test 2-4! *** 

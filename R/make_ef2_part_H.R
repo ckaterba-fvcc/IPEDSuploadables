@@ -4,9 +4,6 @@
 #' @param ugender A boolean: TRUE means you are collecting and able to report
 #'   "another gender" for undergraduate completers, even if you have no (or few)
 #'   such students. Set as FALSE if necessary
-#' @param ggender A boolean: TRUE means you are collecting and able to report
-#'   "another gender" for graduate completers, even if you have no (or few) such
-#'   students. Set as FALSE if necessary
 #'
 #' @importFrom rlang .data
 #' @importFrom dplyr select group_by summarize ungroup arrange transmute n
@@ -18,7 +15,7 @@
 #' @export
 #'
 
-make_ef1_part_H <- function(df, ugender, ggender) {
+make_ef2_part_H <- function(df, ugender) {
 
   colnames(df) <- stringr::str_to_upper(colnames(df))
 
@@ -29,7 +26,7 @@ make_ef1_part_H <- function(df, ugender, ggender) {
                   "GENDERDETAIL"  #Binary = 1, 2;  Unknown = 3, Another = 4
     ) %>%
     #break into UG and GR levels
-    dplyr::mutate(UGPB = ifelse(.data$STUDENTLEVEL == 'Graduate', 'GR', 'UG')) %>%
+    dplyr::mutate(UGPB = 'UG') %>%
     dplyr::select(-"STUDENTLEVEL") %>%
     #deduplicate
     dplyr::distinct() %>%
@@ -44,26 +41,19 @@ make_ef1_part_H <- function(df, ugender, ggender) {
 
   #set up the final DF
   partH <- data.frame(UNITID = unique(partH_counts$UNITID),
-                      SURVSECT = "EF1",
+                      SURVSECT = "EF2",
                       PART = "H",
                       EFGU01 = 0,  #UG detail reporting?
                       EFGU011 = 0, #UG Unknown
                       EFGU012 = 0, #UG Another
-                      EFGU02 = 0,  #GR detail reporting?
-                      EFGU021 = 0, #GR Unknown
-                      EFGU022 = 0) #GR Another
+                      )
 
   #ugly way to get the right counts in each bit.
   #I am sure there is a much nicer way to do it with a pivot
   # and maybe with a dummy table for all values. I dunno. This works.
 
   # #No UG in the data
-  if(!'UG' %in% partH_counts$UGPB){
-    partE$EFGU01 <- 2  #not reporting another
-    partE$EFGU012 <- -2  #not applicable
-
-    #  #UG in the data, another not being reported, unknown might exist
-  } else if(ugender == FALSE){
+  if(ugender == FALSE){
     partH$EFGU01 <- 2
     if(sum(partH_counts$UGPB == 'UG' &
            partH_counts$GENDERDETAIL == 3) == 1){
@@ -90,42 +80,6 @@ make_ef1_part_H <- function(df, ugender, ggender) {
     if(partH$EFGU012 < 5){
       partH$EFGU012 <- -2
       partH$EFGU01 <- 3
-    }
-  }
-
-  # #No GR in the data
-  if(!'GR' %in% partH_counts$UGPB){
-    partH$EFGU02 <- 2  #not reporting another
-    partH$EFGU022 <- -2  #not applicable
-
-    #  #GR in the data, another not being reported, unknown might exist
-  } else if(ggender == FALSE){
-    partH$EFGU02 <- 2
-    if(sum(partH_counts$UGPB == 'GR' &
-           partH_counts$GENDERDETAIL == 3) == 1){
-      partH$EFGU021 <- partH_counts$COUNT[partH_counts$UGPB == 'GR' &
-                                           partH_counts$GENDERDETAIL == 3]
-    }
-    partH$EFGU022 <- -2
-
-    # #GR in the data, another being reported, another/unknown might or might not exist
-  } else {
-    partH$EFGU02 <- 1
-
-    if(sum(partH_counts$UGPB == 'GR' &
-           partH_counts$GENDERDETAIL == 3) == 1){
-      partH$EFGU021 <- partH_counts$COUNT[partH_counts$UGPB == 'GR' &
-                                           partH_counts$GENDERDETAIL == 3]
-    }
-    if(sum(partH_counts$UGPB == 'GR' &
-           partH_counts$GENDERDETAIL == 4) == 1){
-      partH$EFGU022 <- partH_counts$COUNT[partH_counts$UGPB == 'GR' &
-                                           partH_counts$GENDERDETAIL == 4]
-    }
-    #BUT -- New in 2023 - mask if < 5 and set initial inquiry as "small N"
-    if(partH$EFGU022 < 5){
-      partH$EFGU022 <- -2
-      partH$EFGU02 <- 3
     }
   }
 

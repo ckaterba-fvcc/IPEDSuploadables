@@ -14,7 +14,7 @@
 #' @export
 #'
 
-make_ef1_part_B <- function(df) {
+make_ef2_part_B <- function(df) {
 
   colnames(df) <- stringr::str_to_upper(colnames(df))
 
@@ -62,7 +62,7 @@ make_ef1_part_B <- function(df) {
            dplyr::ungroup() %>%
            #format for upload
            dplyr::transmute(UNITID = .data$UNITID,
-                            SURVSECT = "EF1",
+                            SURVSECT = "EF2",
                             PART = "B",
                             LINE = .data$LINE,
                             SLEVEL = .data$STUDENTLEVEL,
